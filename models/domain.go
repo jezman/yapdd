@@ -1,5 +1,12 @@
 package models
 
+import (
+	"encoding/json"
+
+	"github.com/jezman/request"
+	"github.com/jezman/yapdd/pdd"
+)
+
 // Domains struct
 type Domains struct {
 	Total   int       `json:"total"`   // total counts of user domains
@@ -38,4 +45,22 @@ type Domain struct {
 type Secrets struct {
 	Name    string `json:"name"`    // secret part of the actual file name (or CNAME records)
 	Content string `json:"content"` // secret contents of the test file
+}
+
+// List get list of user domains
+func (d *Domains) List(verbose bool) (*Domains, error) {
+	body, err := request.Get(pdd.DomainsList, request.Options{
+		Headers: map[string]string{
+			"Content-Type": "application/x-www-form-urlencoded",
+			"PddToken":     pdd.Token,
+		},
+	})
+	if err != nil {
+		return nil, err
+	}
+	if err = json.Unmarshal(body, d); err != nil {
+		return nil, err
+	}
+
+	return d, nil
 }
