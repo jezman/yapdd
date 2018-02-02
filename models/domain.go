@@ -64,3 +64,23 @@ func (d *Domains) List(verbose bool) (*Domains, error) {
 
 	return d, nil
 }
+
+// List accounts in domain
+func (d *Domain) List(domain string, verbose bool) (*Domain, error) {
+	url := pdd.AccountsList + domain
+
+	response, err := request.Get(url, request.Options{
+		Headers: map[string]string{
+			"Content-Type": "application/x-www-form-urlencoded",
+			"PddToken":     pdd.Token,
+		},
+	})
+	if err != nil {
+		return nil, err
+	}
+	if err = json.Unmarshal(response, d); err != nil {
+		return nil, err
+	}
+
+	return d, nil
+}
