@@ -20,7 +20,7 @@ const (
 
 	AccountsList        = BaseURL + "/admin/email/list?&on_page=1000&domain="
 	AccountAdd          = BaseURL + "/admin/email/add"
-	AccountDelete       = BaseURL + "api2/admin/email/del"
-	AccountUnreadEmails = BaseURL + "/api2/admin/email/counters"
-	AccountUpdate       = BaseURL + "/api2/admin/email/edit"
+	AccountDelete       = BaseURL + "/admin/email/del"
+	AccountUnreadEmails = BaseURL + "/admin/email/counters"
+	AccountUpdate       = BaseURL + "/admin/email/edit"
 )
