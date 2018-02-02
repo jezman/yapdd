@@ -15,7 +15,14 @@ var showCmd = &cobra.Command{
 	Use:   "show",
 	Short: "Domains and accounts list. Count of unread emails in account.",
 	Run: func(cmd *cobra.Command, args []string) {
-		render.Domains(verbose)
+		switch {
+		case domain != "":
+			render.Accounts(domain, verbose)
+		case account != "":
+			// TODO:
+		default:
+			render.Domains(verbose)
+		}
 	},
 }
 
