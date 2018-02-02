@@ -1,5 +1,13 @@
 package models
 
+import (
+	"encoding/json"
+	"strings"
+
+	"github.com/jezman/request"
+	"github.com/jezman/yapdd/pdd"
+)
+
 // Account struct
 type Account struct {
 	Domain   string    `json:"domain"`     // domain name
@@ -24,4 +32,25 @@ type Account struct {
 type Counters struct {
 	Unread int `json:"unread"`
 	New    int `json:"new"`
+}
+
+// UnreadMail count of unreaded
+func (a *Account) UnreadMail(account string) (*Account, error) {
+	domain := strings.Split(account, "@")[1]
+	url := pdd.AccountUnreadEmails + "?domain=" + domain + "&login=" + account
+
+	response, err := request.Get(url, request.Options{
+		Headers: map[string]string{
+			"Content-Type": "application/x-www-form-urlencoded",
+			"PddToken":     pdd.Token,
+		},
+	})
+	if err != nil {
+		return nil, err
+	}
+	if err = json.Unmarshal(response, a); err != nil {
+		return nil, err
+	}
+
+	return a, nil
 }

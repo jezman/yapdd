@@ -19,7 +19,7 @@ var showCmd = &cobra.Command{
 		case domain != "":
 			render.Accounts(domain, verbose)
 		case account != "":
-			// TODO:
+			render.CountOfUnreadMail(account)
 		default:
 			render.Domains(verbose)
 		}

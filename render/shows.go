@@ -90,3 +90,18 @@ func Accounts(domain string, verbose bool) {
 		fmt.Printf("Total accounts in domain %s: %d\n", domain, list.Total)
 	}
 }
+
+// CountOfUnreadMail rendered
+func CountOfUnreadMail(account string) {
+	a := &models.Account{}
+	emailsCount, err := a.UnreadMail(account)
+
+	if err != nil {
+		fmt.Println(err)
+	} else if emailsCount.Success != "ok" {
+		fmt.Printf("Status: %s\nError: %s\n", emailsCount.Success, emailsCount.Error)
+	} else {
+		fmt.Println("Count of unread emails:", emailsCount.Counters.New)
+		fmt.Println("Count of letters received since the last mailbox test:", emailsCount.Counters.Unread)
+	}
+}
