@@ -18,7 +18,7 @@ const (
 	DomainDelete     = BaseURL + "/admin/domain/delete"
 	DomainSetCountry = BaseURL + "/admin/domain/settings/set_country"
 
-	AccountsList        = BaseURL + "/admin/email/list?&on_page=1000domain="
+	AccountsList        = BaseURL + "/admin/email/list?&on_page=1000&domain="
 	AccountAdd          = BaseURL + "/admin/email/add"
 	AccountDelete       = BaseURL + "api2/admin/email/del"
 	AccountUnreadEmails = BaseURL + "/api2/admin/email/counters"
