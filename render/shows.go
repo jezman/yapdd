@@ -52,3 +52,41 @@ func Domains(verbose bool) {
 		fmt.Println("Total domains:", list.Total)
 	}
 }
+
+// Accounts list in domain
+func Accounts(domain string, verbose bool) {
+	dmn := &models.Domain{}
+	list, err := dmn.List(domain, verbose)
+
+	if err != nil {
+		fmt.Println(err)
+	} else if list.Success != "ok" {
+		fmt.Printf("Status: %s\nError: %s\n", list.Success, list.Error)
+	} else {
+		table := termtables.CreateTable()
+		table.AddTitle("A list of accounts in the domain.")
+
+		if verbose {
+			table.AddHeaders("Account", "Active/Ready", "User name/Birthday", "Question hint")
+
+			for _, a := range list.Accounts {
+				table.AddRow(
+					a.Login,
+					a.Enabled+"/"+a.Ready,
+					a.User+" "+a.Birthday,
+					a.Question,
+				)
+			}
+		} else {
+			table.AddHeaders("Account")
+
+			for _, a := range list.Accounts {
+				table.AddRow(
+					a.Login,
+				)
+			}
+		}
+		fmt.Println(table.Render())
+		fmt.Printf("Total accounts in domain %s: %d\n", domain, list.Total)
+	}
+}
