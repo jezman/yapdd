@@ -1,8 +1,7 @@
 package cmd
 
 import (
-	"fmt"
-
+	"github.com/jezman/yapdd/render"
 	"github.com/spf13/cobra"
 )
 
@@ -16,7 +15,7 @@ var showCmd = &cobra.Command{
 	Use:   "show",
 	Short: "Domains and accounts list. Count of unread emails in account.",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("show")
+		render.Domains(verbose)
 	},
 }
 
