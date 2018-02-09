@@ -84,3 +84,24 @@ func (d *Domain) List(domain string, verbose bool) (*Domain, error) {
 
 	return d, nil
 }
+
+// Add domain into Yandex PDD
+func (d *Domain) Add(domain string) (*Domain, error) {
+	body, err := request.Post(pdd.DomainAdd, request.Options{
+		Headers: map[string]string{
+			"Content-Type": "application/x-www-form-urlencoded",
+			"PddToken":     pdd.Token,
+		},
+		Body: map[string]string{
+			"domain": domain,
+		},
+	})
+	if err != nil {
+		return nil, err
+	}
+	if err = json.Unmarshal(body, d); err != nil {
+		return nil, err
+	}
+
+	return d, nil
+}
