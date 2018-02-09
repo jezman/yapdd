@@ -7,8 +7,11 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Verbose default false
-var verbose bool
+var (
+	account string
+	domain  string
+	verbose bool
+)
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{

@@ -5,11 +5,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var (
-	account string
-	domain  string
-)
-
 // showCmd represents the show command
 var showCmd = &cobra.Command{
 	Use:   "show",
