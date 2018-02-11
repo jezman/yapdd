@@ -11,7 +11,7 @@ const (
 	// BaseURL API version 2
 	BaseURL = "https://pddimp.yandex.ru/api2"
 
-	DomainsList      = BaseURL + "/admin/domain/domains?&on_page=1000"
+	DomainsList      = BaseURL + "/admin/domain/domains?&on_page=20"
 	DomainAdd        = BaseURL + "/admin/domain/register"
 	DomainStatus     = BaseURL + "/admin/domain/registration_status"
 	DomainConfig     = BaseURL + "/admin/domain/details"
