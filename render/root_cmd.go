@@ -67,7 +67,7 @@ func Accounts(domain string, verbose bool) {
 		table.AddTitle("A list of accounts in the domain.")
 
 		if verbose {
-			table.AddHeaders("Account", "Active/Ready", "User name/Birthday", "Question hint")
+			table.AddHeaders("Account", "Active/Ready", "Username/Birthday", "Question hint")
 
 			for _, a := range list.Accounts {
 				table.AddRow(
