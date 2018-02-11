@@ -10,6 +10,8 @@ import (
 )
 
 var (
+	config  bool
+	status  bool
 	verbose bool
 )
 
@@ -25,6 +27,7 @@ Example:
   yapdd acc@example.com     Count of unread emails in account.`,
 	Args: cobra.RangeArgs(0, 1),
 	Run: func(cmd *cobra.Command, args []string) {
+		// FIXME: Move checks to function.
 		if len(args) < 1 {
 			render.Domains(verbose)
 		} else {
@@ -47,6 +50,9 @@ func Execute() {
 }
 
 func init() {
-	rootCmd.PersistentFlags().BoolVarP(&verbose, "verbose", "v", false, "verbose output")
-	// rootCmd.Flags().BoolVarP(&status, "status", "s", false, "show status")
+	rootCmd.Flags().BoolVarP(&verbose, "verbose", "v", false, "verbose output")
+	// TODO: implement Status flag
+	// TODO: implement Config or info
+	rootCmd.Flags().BoolVarP(&status, "status", "s", false, "show connection status")
+	rootCmd.Flags().BoolVarP(&config, "config", "c", false, "show config")
 }
