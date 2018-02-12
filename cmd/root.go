@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/jezman/yapdd/check"
 	"github.com/jezman/yapdd/render"
+	"github.com/jezman/yapdd/utils"
 	"github.com/spf13/cobra"
 )
 
@@ -29,17 +29,17 @@ Example:
 	Run: func(cmd *cobra.Command, args []string) {
 		switch {
 		case status:
-			if check.IsAccount(args[0]) {
+			render.DomainStatus(args[0])
+		case config:
+			if utils.IsAccount(args[0]) {
 				// TODO: acc status
 			} else {
-				render.DomainStatus(args[0])
+				render.DomainConfig(args[0])
 			}
-		case config:
-			render.DomainConfig(args[0])
 		case len(args) < 1:
 			render.Domains(verbose)
 		default:
-			if check.IsAccount(args[0]) {
+			if utils.IsAccount(args[0]) {
 				render.CountOfUnreadMail(args[0])
 			} else {
 				render.Accounts(args[0], verbose)
