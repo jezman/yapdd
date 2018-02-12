@@ -10,18 +10,20 @@ import (
 // Domains print domains list table
 func Domains(verbose bool) {
 	domains := &models.Domains{}
-	list, err := domains.List(verbose)
+	json, err := domains.List(verbose)
 
 	if err != nil {
 		fmt.Println(err)
-	} else if list.Success != "ok" {
-		fmt.Printf("Status: %s\nError: %s\n", list.Success, list.Error)
+	} else if json.Success != "ok" {
+		fmt.Println("Error:", json.Error)
 	} else {
 		table := termtables.CreateTable()
 		table.AddTitle("List of user domains.")
 
 		if verbose {
-			table.AddHeaders("Domains",
+			table.AddHeaders(
+				"#",
+				"Domains",
 				"Aliases",
 				"Status",
 				"NS Delegated",
@@ -30,8 +32,10 @@ func Domains(verbose bool) {
 				"Max accounts",
 			)
 
-			for _, d := range list.Domains {
-				table.AddRow(d.Name,
+			for i, d := range json.Domains {
+				table.AddRow(
+					i+1,
+					d.Name,
 					d.Aliases,
 					d.Status,
 					d.NSDelegated,
@@ -42,35 +46,36 @@ func Domains(verbose bool) {
 			}
 
 		} else {
-			table.AddHeaders("Domains", "Accounts")
+			table.AddHeaders("#", "Domains", "Accounts")
 
-			for _, d := range list.Domains {
-				table.AddRow(d.Name, d.EmailsCount)
+			for i, d := range json.Domains {
+				table.AddRow(i+1, d.Name, d.EmailsCount)
 			}
 		}
 		fmt.Println(table.Render())
-		fmt.Println("Total domains:", list.Total)
+		// fmt.Println("Total domains:", list.Total)
 	}
 }
 
 // Accounts list in domain
-func Accounts(domain string, verbose bool) {
-	dmn := &models.Domain{}
-	list, err := dmn.List(domain, verbose)
+func Accounts(domainName string, verbose bool) {
+	domain := &models.Domain{}
+	json, err := domain.List(domainName, verbose)
 
 	if err != nil {
 		fmt.Println(err)
-	} else if list.Success != "ok" {
-		fmt.Printf("Status: %s\nError: %s\n", list.Success, list.Error)
+	} else if json.Success != "ok" {
+		fmt.Println("Error:", json.Error)
 	} else {
 		table := termtables.CreateTable()
 		table.AddTitle("A list of accounts in the domain.")
 
 		if verbose {
-			table.AddHeaders("Account", "Active/Ready", "Username/Birthday", "Question hint")
+			table.AddHeaders("#", "Account", "Active/Ready", "Username/Birthday", "Question hint")
 
-			for _, a := range list.Accounts {
+			for i, a := range json.Accounts {
 				table.AddRow(
+					i+1,
 					a.Login,
 					a.Enabled+"/"+a.Ready,
 					a.User+" "+a.Birthday,
@@ -78,30 +83,91 @@ func Accounts(domain string, verbose bool) {
 				)
 			}
 		} else {
-			table.AddHeaders("Account")
+			table.AddHeaders("#", "Account")
 
-			for _, a := range list.Accounts {
+			for i, a := range json.Accounts {
 				table.AddRow(
+					i+1,
 					a.Login,
 				)
 			}
 		}
 		fmt.Println(table.Render())
-		fmt.Printf("Total accounts in domain %s: %d\n", domain, list.Total)
 	}
 }
 
 // CountOfUnreadMail rendered
-func CountOfUnreadMail(account string) {
-	a := &models.Account{}
-	emailsCount, err := a.UnreadMail(account)
+func CountOfUnreadMail(accountName string) {
+	account := &models.Account{}
+	json, err := account.UnreadMail(accountName)
 
 	if err != nil {
 		fmt.Println(err)
-	} else if emailsCount.Success != "ok" {
-		fmt.Printf("Status: %s\nError: %s\n", emailsCount.Success, emailsCount.Error)
+	} else if json.Success != "ok" {
+		fmt.Println("Error:", json.Error)
 	} else {
-		fmt.Println("Count of unread emails:", emailsCount.Counters.New)
-		fmt.Println("Count of letters received since the last mailbox test:", emailsCount.Counters.Unread)
+		fmt.Println("Count of unread emails:", json.Counters.New)
+		fmt.Println("Count of letters received since the last mailbox test:", json.Counters.Unread)
+	}
+}
+
+// DomainStatus render connection status
+func DomainStatus(domainName string) {
+	domain := &models.Domain{}
+	json, err := domain.ConnectionStatus(domainName)
+
+	if err != nil {
+		fmt.Println(err)
+	} else if json.Success != "ok" {
+		fmt.Println("Error:", json.Error)
+	} else {
+		table := termtables.CreateTable()
+		table.AddTitle("Domain connection status.")
+
+		table.AddHeaders("Domain", "Status", "Check results", "Last check", "Next check")
+
+		table.AddRow(
+			json.Domain,
+			json.Status,
+			json.CheckResults,
+			// FIXME: convert time
+			json.LastCheck,
+			json.NextCheck,
+		)
+		fmt.Println(table.Render())
+	}
+}
+
+// DomainConfig render connection status
+func DomainConfig(domainName string) {
+	domain := &models.Domain{}
+	json, err := domain.Config(domainName)
+
+	if err != nil {
+		fmt.Println(err)
+	} else if json.Success != "ok" {
+		fmt.Println("Error:", json.Error)
+	} else {
+		table := termtables.CreateTable()
+		table.AddTitle("Domain configuration.")
+
+		table.AddHeaders(
+			"Domain",
+			"Status",
+			"Delegated",
+			"Country",
+			"IMAP",
+			"POP",
+		)
+
+		table.AddRow(
+			json.Domain,
+			json.Status,
+			json.Delegated,
+			json.Country,
+			json.ImapEnabled,
+			json.PopEnabled,
+		)
+		fmt.Println(table.Render())
 	}
 }
