@@ -130,7 +130,6 @@ func DomainStatus(domainName string) {
 			json.Domain,
 			json.Status,
 			json.CheckResults,
-			// FIXME: convert time
 			json.LastCheck,
 			json.NextCheck,
 		)
@@ -149,7 +148,7 @@ func DomainConfig(domainName string) {
 		fmt.Println("Error:", json.Error)
 	} else {
 		table := termtables.CreateTable()
-		table.AddTitle("Domain configuration.")
+		table.AddTitle("Domain settings.")
 
 		table.AddHeaders(
 			"Domain",
