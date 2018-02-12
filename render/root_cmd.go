@@ -53,7 +53,6 @@ func Domains(verbose bool) {
 			}
 		}
 		fmt.Println(table.Render())
-		// fmt.Println("Total domains:", list.Total)
 	}
 }
 
