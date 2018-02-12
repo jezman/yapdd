@@ -2,10 +2,12 @@ package models
 
 import (
 	"encoding/json"
+	"errors"
 	"strings"
 
 	"github.com/jezman/request"
 	"github.com/jezman/yapdd/pdd"
+	"github.com/jezman/yapdd/utils"
 )
 
 // Account struct
@@ -34,15 +36,24 @@ type Counters struct {
 	New    int `json:"new"`
 }
 
-// UnreadMail count of unreaded
+// UnreadMail cou	nt of unreaded
 func (a *Account) UnreadMail(account string) (*Account, error) {
-	domain := strings.Split(account, "@")[1]
-	url := pdd.AccountUnreadEmails + "?domain=" + domain + "&login=" + account
+	tmp, err := utils.SplitAccount(account)
+	if err != nil {
+		return nil, errors.New("invalid email format")
+	}
 
-	response, err := request.Get(url, request.Options{
+	accountName := tmp[0]
+	domainName := tmp[1]
+
+	response, err := request.Get(pdd.AccountUnreadEmails, request.Options{
 		Headers: map[string]string{
 			"Content-Type": "application/x-www-form-urlencoded",
 			"PddToken":     pdd.Token,
+		},
+		Body: map[string]string{
+			"domain": domainName,
+			"login":  accountName,
 		},
 	})
 	if err != nil {
@@ -53,4 +64,55 @@ func (a *Account) UnreadMail(account string) (*Account, error) {
 	}
 
 	return a, nil
+}
+
+// Add account
+func (a *Account) Add(account string) (*Account, error) {
+	var password [2]string
+
+	ask := utils.ReadStdIn("Generate password? (Yes): ")
+
+	if strings.ToLower(ask) == "yes" || strings.ToLower(ask) == "" {
+		// generate password
+		password[0] = utils.GeneratePassword(11)
+		password[1] = password[0]
+	} else {
+		// first password input
+		password[0] = utils.ReadStdIn("Password: ")
+
+		// confirmation password input
+		password[1] = utils.ReadStdIn("Confirm password: ")
+	}
+
+	// check passwords match
+	if password[0] == password[1] {
+		tmp, err := utils.SplitAccount(account)
+		if err != nil {
+			return nil, errors.New("invalid email format")
+		}
+
+		accountName := tmp[0]
+		domainName := tmp[1]
+
+		response, err := request.Post(pdd.AccountAdd, request.Options{
+			Headers: map[string]string{
+				"Content-Type": "application/x-www-form-urlencoded",
+				"PddToken":     pdd.Token,
+			},
+			Body: map[string]string{
+				"domain":   domainName,
+				"login":    accountName,
+				"password": password[1],
+			},
+		})
+		if err != nil {
+			return nil, err
+		}
+		if err = json.Unmarshal(response, a); err != nil {
+			return nil, err
+		}
+
+		return a, nil
+	}
+	return nil, errors.New("passwords don't match")
 }
