@@ -2,9 +2,11 @@ package models
 
 import (
 	"encoding/json"
+	"errors"
 
 	"github.com/jezman/request"
 	"github.com/jezman/yapdd/pdd"
+	"github.com/jezman/yapdd/utils"
 )
 
 // Domains struct
@@ -151,4 +153,33 @@ func (d *Domain) Config(domain string) (*Domain, error) {
 	}
 
 	return d, nil
+}
+
+// Remove domain from YandexPDD
+func (d *Domain) Remove(domainName string) (*Domain, error) {
+	capcha := utils.RandomInt(8)
+
+	warning := "please confirm domain removed. input: " + capcha + "\n"
+	confirmation := utils.ReadStdIn(warning)
+
+	if confirmation == capcha {
+		body, err := request.Post(pdd.DomainDelete, request.Options{
+			Headers: map[string]string{
+				"Content-Type": "application/x-www-form-urlencoded",
+				"PddToken":     pdd.Token,
+			},
+			Body: map[string]string{
+				"domain": domainName,
+			},
+		})
+		if err != nil {
+			return nil, err
+		}
+		if err = json.Unmarshal(body, d); err != nil {
+			return nil, err
+		}
+		return d, nil
+	}
+
+	return nil, errors.New("confirmation error")
 }

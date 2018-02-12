@@ -116,3 +116,41 @@ func (a *Account) Add(account string) (*Account, error) {
 	}
 	return nil, errors.New("passwords don't match")
 }
+
+// Remove domain from YandexPDD
+func (a *Account) Remove(accountName string) (*Account, error) {
+	capcha := utils.RandomInt(8)
+
+	warning := "please confirm account removed. input: " + capcha + "\n"
+	confirmation := utils.ReadStdIn(warning)
+
+	if confirmation == capcha {
+		tmp, err := utils.SplitAccount(accountName)
+		if err != nil {
+			return nil, errors.New("invalid email format")
+		}
+
+		accountName := tmp[0]
+		domainName := tmp[1]
+
+		body, err := request.Post(pdd.AccountDelete, request.Options{
+			Headers: map[string]string{
+				"Content-Type": "application/x-www-form-urlencoded",
+				"PddToken":     pdd.Token,
+			},
+			Body: map[string]string{
+				"login":  accountName,
+				"domain": domainName,
+			},
+		})
+		if err != nil {
+			return nil, err
+		}
+		if err = json.Unmarshal(body, a); err != nil {
+			return nil, err
+		}
+		return a, nil
+	}
+
+	return nil, errors.New("confirmation error")
+}
