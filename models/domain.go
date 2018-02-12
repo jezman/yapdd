@@ -70,9 +70,7 @@ func (d *Domains) List(verbose bool) (*Domains, error) {
 
 // List accounts in domain
 func (d *Domain) List(domain string, verbose bool) (*Domain, error) {
-	url := pdd.AccountsList
-
-	response, err := request.Get(url, request.Options{
+	response, err := request.Get(pdd.AccountsList, request.Options{
 		Headers: map[string]string{
 			"Content-Type": "application/x-www-form-urlencoded",
 			"PddToken":     pdd.Token,
