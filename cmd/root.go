@@ -3,8 +3,8 @@ package cmd
 import (
 	"fmt"
 	"os"
-	"strings"
 
+	"github.com/jezman/yapdd/check"
 	"github.com/jezman/yapdd/render"
 	"github.com/spf13/cobra"
 )
@@ -27,11 +27,19 @@ Example:
   yapdd acc@example.com     Count of unread emails in account.`,
 	Args: cobra.RangeArgs(0, 1),
 	Run: func(cmd *cobra.Command, args []string) {
-		// FIXME: Move checks to function.
-		if len(args) < 1 {
+		switch {
+		case status:
+			if check.IsAccount(args[0]) {
+				// TODO: acc status
+			} else {
+				render.DomainStatus(args[0])
+			}
+		case config:
+			render.DomainConfig(args[0])
+		case len(args) < 1:
 			render.Domains(verbose)
-		} else {
-			if strings.Contains(args[0], "@") {
+		default:
+			if check.IsAccount(args[0]) {
 				render.CountOfUnreadMail(args[0])
 			} else {
 				render.Accounts(args[0], verbose)
@@ -51,8 +59,6 @@ func Execute() {
 
 func init() {
 	rootCmd.Flags().BoolVarP(&verbose, "verbose", "v", false, "verbose output")
-	// TODO: implement Status flag
-	// TODO: implement Config or info
 	rootCmd.Flags().BoolVarP(&status, "status", "s", false, "show connection status")
 	rootCmd.Flags().BoolVarP(&config, "config", "c", false, "show config")
 }
