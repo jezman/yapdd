@@ -23,4 +23,6 @@ const (
 	AccountDelete       = BaseURL + "/admin/email/del"
 	AccountUnreadEmails = BaseURL + "/admin/email/counters"
 	AccountUpdate       = BaseURL + "/admin/email/edit"
+
+	DNSList = BaseURL + "/admin/dns/list"
 )

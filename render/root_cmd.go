@@ -2,6 +2,7 @@ package render
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/apcera/termtables"
 	"github.com/jezman/yapdd/models"
@@ -167,5 +168,26 @@ func DomainConfig(domainName string) {
 			json.PopEnabled,
 		)
 		fmt.Println(table.Render())
+	}
+}
+
+func DomainDNSRecords(domainName string) {
+	domain := &models.DNSRecords{}
+	json, err := domain.DNSRecords(domainName)
+
+	if err != nil {
+		fmt.Println(err)
+	} else if json.Success != "ok" {
+		fmt.Println("Error:", json.Error)
+	} else {
+		for _, d := range json.Records {
+			fmt.Printf("%s\n", strings.Repeat("-", 50))
+			fmt.Printf("%s\t| ", d.Type)
+			fmt.Println("Record ID:", d.RecordID)
+			fmt.Println("\t| Full domain name:", d.FQDN)
+			fmt.Println("\t| TTL:", d.TTL)
+			fmt.Println("\t| Subdomain:", d.Subdomain)
+			fmt.Println("\t| Content:", d.Content)
+		}
 	}
 }

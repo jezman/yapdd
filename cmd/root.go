@@ -10,6 +10,7 @@ import (
 )
 
 var (
+	dns     bool
 	config  bool
 	status  bool
 	verbose bool
@@ -24,18 +25,19 @@ var rootCmd = &cobra.Command{
 Example:
   yapdd                     Domains list.
   yapdd example.com         List of accounts in domain.
+  yapdd example.com -d      Show DNS records.
+  yapdd example.com -s      Domain connection status.
+  yapdd example.com -c      Domain settings.
   yapdd acc@example.com     Count of unread emails in account.`,
 	Args: cobra.RangeArgs(0, 1),
 	Run: func(cmd *cobra.Command, args []string) {
 		switch {
 		case status:
 			render.DomainStatus(args[0])
+		case dns:
+			render.DomainDNSRecords(args[0])
 		case config:
-			if utils.IsAccount(args[0]) {
-				// TODO: acc status
-			} else {
-				render.DomainConfig(args[0])
-			}
+			render.DomainConfig(args[0])
 		case len(args) < 1:
 			render.Domains(verbose)
 		default:
@@ -61,4 +63,5 @@ func init() {
 	rootCmd.Flags().BoolVarP(&verbose, "verbose", "v", false, "verbose output")
 	rootCmd.Flags().BoolVarP(&status, "status", "s", false, "show connection status")
 	rootCmd.Flags().BoolVarP(&config, "config", "c", false, "show config")
+	rootCmd.Flags().BoolVarP(&dns, "dns", "d", false, "show dns")
 }
