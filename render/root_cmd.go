@@ -8,7 +8,7 @@ import (
 	"github.com/jezman/yapdd/models"
 )
 
-// Domains print domains list table
+// Domains render domains list table.
 func Domains(verbose bool) {
 	domains := &models.Domains{}
 	json, err := domains.List(verbose)
@@ -21,6 +21,7 @@ func Domains(verbose bool) {
 		table := termtables.CreateTable()
 		table.AddTitle("List of user domains.")
 
+		// verbose output
 		if verbose {
 			table.AddHeaders(
 				"#",
@@ -46,6 +47,7 @@ func Domains(verbose bool) {
 				)
 			}
 
+			// quiet output
 		} else {
 			table.AddHeaders("#", "Domains", "Accounts")
 
@@ -57,7 +59,7 @@ func Domains(verbose bool) {
 	}
 }
 
-// Accounts list in domain
+// Accounts render accounts list in domain.
 func Accounts(domainName string, verbose bool) {
 	domain := &models.Domain{}
 	json, err := domain.List(domainName, verbose)
@@ -70,6 +72,7 @@ func Accounts(domainName string, verbose bool) {
 		table := termtables.CreateTable()
 		table.AddTitle("A list of accounts in the domain.")
 
+		// vebose output
 		if verbose {
 			table.AddHeaders("#", "Account", "Active/Ready", "Username/Birthday", "Question hint")
 
@@ -82,6 +85,7 @@ func Accounts(domainName string, verbose bool) {
 					a.Question,
 				)
 			}
+			// quiet output
 		} else {
 			table.AddHeaders("#", "Account")
 
@@ -96,7 +100,7 @@ func Accounts(domainName string, verbose bool) {
 	}
 }
 
-// CountOfUnreadMail rendered
+// CountOfUnreadMail in account.
 func CountOfUnreadMail(accountName string) {
 	account := &models.Account{}
 	json, err := account.UnreadMail(accountName)
@@ -111,7 +115,7 @@ func CountOfUnreadMail(accountName string) {
 	}
 }
 
-// DomainStatus render connection status
+// DomainStatus render connection status.
 func DomainStatus(domainName string) {
 	domain := &models.Domain{}
 	json, err := domain.ConnectionStatus(domainName)
@@ -137,7 +141,7 @@ func DomainStatus(domainName string) {
 	}
 }
 
-// DomainConfig render connection status
+// DomainConfig render domain settings.
 func DomainConfig(domainName string) {
 	domain := &models.Domain{}
 	json, err := domain.Config(domainName)
@@ -171,6 +175,7 @@ func DomainConfig(domainName string) {
 	}
 }
 
+// DomainDNSRecords print DNS records in domain.
 func DomainDNSRecords(domainName string) {
 	domain := &models.DNSRecords{}
 	json, err := domain.DNSRecords(domainName)
