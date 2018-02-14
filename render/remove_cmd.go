@@ -6,6 +6,7 @@ import (
 	"github.com/jezman/yapdd/models"
 )
 
+// RemoveDomain print result of domain removed.
 func RemoveDomain(domainName string) {
 	domain := &models.Domain{}
 	json, err := domain.Remove(domainName)
@@ -20,6 +21,7 @@ func RemoveDomain(domainName string) {
 
 }
 
+// RemoveAccount print result of account removed.
 func RemoveAccount(accountName string) {
 	account := &models.Account{}
 	json, err := account.Remove(accountName)
@@ -29,7 +31,7 @@ func RemoveAccount(accountName string) {
 	} else if json.Success != "ok" {
 		fmt.Printf("Error: %s\n", json.Error)
 	} else {
-		fmt.Printf("Domain '%s' has been successfully removed.\n", json.Login)
+		fmt.Printf("Account '%s' has been successfully removed.\n", json.Login)
 	}
 
 }
