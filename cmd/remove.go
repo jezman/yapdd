@@ -9,16 +9,15 @@ import (
 // removeCmd represents the remove command
 var removeCmd = &cobra.Command{
 	Use:   "remove",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
+	Short: "Remove domains from YandexPDD and accounts from domains.",
+	Long: `Command "remove" - Remove domains from YandexPDD and accounts from domains.
+Need confirmation for removal.
 
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+Example:
+  yapdd remove example.com        Removes domain "example.com" from YandexPDD.
+  yapdd remove toremove@example.com    Remove account "toremove" from domain "example.com".`,
 	Args: cobra.RangeArgs(1, 1),
 	Run: func(cmd *cobra.Command, args []string) {
-		// TODO: Add accounts.
 		if utils.IsAccount(args[0]) {
 			render.RemoveAccount(args[0])
 		} else {
