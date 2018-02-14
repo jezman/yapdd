@@ -36,11 +36,11 @@ type Counters struct {
 	New    int `json:"new"`
 }
 
-// UnreadMail cou	nt of unreaded
+// UnreadMail gets count of unread emails in account.
 func (a *Account) UnreadMail(account string) (*Account, error) {
 	tmp, err := utils.SplitAccount(account)
 	if err != nil {
-		return nil, errors.New("invalid email format")
+		return nil, err
 	}
 
 	accountName := tmp[0]
@@ -62,24 +62,22 @@ func (a *Account) UnreadMail(account string) (*Account, error) {
 	if err = json.Unmarshal(response, a); err != nil {
 		return nil, err
 	}
-
 	return a, nil
 }
 
-// Add account
+// Add account in domain.
 func (a *Account) Add(account string) (*Account, error) {
 	var password [2]string
 
 	ask := utils.ReadStdIn("Generate password? (Yes): ")
-
+	// generate password is answer "yes"
 	if strings.ToLower(ask) == "yes" || strings.ToLower(ask) == "" {
-		// generate password
 		password[0] = utils.GeneratePassword(11)
 		password[1] = password[0]
+	// hand password input
 	} else {
 		// first password input
 		password[0] = utils.ReadStdIn("Password: ")
-
 		// confirmation password input
 		password[1] = utils.ReadStdIn("Confirm password: ")
 	}
@@ -94,6 +92,7 @@ func (a *Account) Add(account string) (*Account, error) {
 		accountName := tmp[0]
 		domainName := tmp[1]
 
+		// send request
 		response, err := request.Post(pdd.AccountAdd, request.Options{
 			Headers: map[string]string{
 				"Content-Type": "application/x-www-form-urlencoded",
@@ -111,19 +110,22 @@ func (a *Account) Add(account string) (*Account, error) {
 		if err = json.Unmarshal(response, a); err != nil {
 			return nil, err
 		}
-
 		return a, nil
 	}
+	
 	return nil, errors.New("passwords don't match")
 }
 
-// Remove domain from YandexPDD
+// Remove domain from YandexPDD.
 func (a *Account) Remove(accountName string) (*Account, error) {
+	// generates capcha for confirm remove
 	capcha := utils.RandomInt(8)
 
 	warning := "please confirm account removed. input: " + capcha + "\n"
+	// read user confirmation
 	confirmation := utils.ReadStdIn(warning)
 
+	// check confirmation
 	if confirmation == capcha {
 		tmp, err := utils.SplitAccount(accountName)
 		if err != nil {
@@ -132,7 +134,7 @@ func (a *Account) Remove(accountName string) (*Account, error) {
 
 		accountName := tmp[0]
 		domainName := tmp[1]
-
+		// sends remove request
 		body, err := request.Post(pdd.AccountDelete, request.Options{
 			Headers: map[string]string{
 				"Content-Type": "application/x-www-form-urlencoded",
@@ -152,5 +154,6 @@ func (a *Account) Remove(accountName string) (*Account, error) {
 		return a, nil
 	}
 
+	// wrong confirmation
 	return nil, errors.New("confirmation error")
 }
