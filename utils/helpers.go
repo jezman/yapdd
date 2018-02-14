@@ -13,7 +13,9 @@ import (
 
 var	emailValidateTemplate = regexp.MustCompile("^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$")
 
-// IsAccount checks
+// IsAccount check input flag.
+// Return true if flag is account.
+// Return false if flag is a domain name.
 func IsAccount(flag string) bool {
 	if emailValidateTemplate.MatchString(flag) {
 		return true
@@ -21,18 +23,21 @@ func IsAccount(flag string) bool {
 	return false
 }
 
-// SplitAccount on account name and domain name
+// SplitAccount on login and and domain name.
 func SplitAccount(account string) ([]string, error) {
 
 	account = strings.ToLower(account)
 
+	// check email regexp
 	if emailValidateTemplate.MatchString(account) {
 		return strings.Split(account, "@"), nil
 	}
 	return nil, errors.New("error: invalid email")
 }
 
-// GeneratePassword for email account
+// GeneratePassword for email account.
+// Accept int - length password.
+// Return password string.
 func GeneratePassword(n int) string {
 	// allowed symbol
 	chars := []rune("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789`!@#$%^&*()-_=+,.?/:;{}[]<>")
@@ -46,7 +51,8 @@ func GeneratePassword(n int) string {
 	return string(result)
 }
 
-// RandomInt generate random string
+// RandomInt generate and return random string from ints.
+// Accept int - length password.
 func RandomInt(n int) string {
 	r := rand.New(rand.NewSource(time.Now().UnixNano()))
 	intArray := make([]int, n)
@@ -59,7 +65,7 @@ func RandomInt(n int) string {
 	return string(s)
 }
 
-// ReadStdIn string
+// ReadStdIn helper for read string.
 func ReadStdIn(stringToPrint string) string {
 	fmt.Print(stringToPrint)
 
