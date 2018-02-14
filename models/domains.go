@@ -16,8 +16,8 @@ type Domains struct {
 }
 
 // List get list of user domains
-func (d *Domains) List(url string, verbose bool) (*Domains, error) {
-	body, err := request.Get(url, request.Options{
+func (d *Domains) List(verbose bool) (*Domains, error) {
+	body, err := request.Get(pdd.DomainsList, request.Options{
 		Headers: map[string]string{
 			"Content-Type": "application/x-www-form-urlencoded",
 			"PddToken":     pdd.Token,
