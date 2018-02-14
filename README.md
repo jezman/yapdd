@@ -9,7 +9,7 @@ export PDD_TOKEN="yandex_pdd_api_token"
 Install Gorion
 If you have [Go](https://golang.org/) installed: 
 ```bash
-go get github.com/jezman/yapdd && go install $GOPATH/src/github.com/jezman/yapdd
+go get github.com/jezman/yapdd && go install github.com/jezman/yapdd
 ```
 Otherwise, please see [Go install](https://golang.org/doc/install).
 ## Features
