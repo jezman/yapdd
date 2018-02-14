@@ -6,7 +6,7 @@ import (
 	"github.com/jezman/yapdd/models"
 )
 
-// AddDomain to Yandex PDD
+// AddDomain print domain add result.
 func AddDomain(domainName string) {
 	domain := &models.Domain{}
 	json, err := domain.Add(domainName)
@@ -20,7 +20,7 @@ func AddDomain(domainName string) {
 	}
 }
 
-// AddAccount to Yandex PDD
+// AddAccount print account add result.
 func AddAccount(accountName string) {
 	account := &models.Account{}
 	json, err := account.Add(accountName)
