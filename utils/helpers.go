@@ -11,9 +11,11 @@ import (
 	"time"
 )
 
+var	emailValidateTemplate = regexp.MustCompile("^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$")
+
 // IsAccount checks
 func IsAccount(flag string) bool {
-	if strings.Contains(flag, "@") {
+	if emailValidateTemplate.MatchString(flag) {
 		return true
 	}
 	return false
@@ -21,11 +23,10 @@ func IsAccount(flag string) bool {
 
 // SplitAccount on account name and domain name
 func SplitAccount(account string) ([]string, error) {
-	re := regexp.MustCompile("^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$")
 
 	account = strings.ToLower(account)
 
-	if re.MatchString(account) {
+	if emailValidateTemplate.MatchString(account) {
 		return strings.Split(account, "@"), nil
 	}
 	return nil, errors.New("error: invalid email")
