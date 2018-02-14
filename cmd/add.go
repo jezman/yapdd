@@ -17,7 +17,6 @@ Example:
   yapdd add acc@example.com    Adding account into domain "example.com".`,
 	Args: cobra.RangeArgs(1, 1),
 	Run: func(cmd *cobra.Command, args []string) {
-		// TODO: Add accounts.
 		if utils.IsAccount(args[0]) {
 			render.AddAccount(args[0])
 		} else {

@@ -15,7 +15,7 @@ type Domains struct {
 	Error   string    `json:"error"`   // error message
 }
 
-// List get list of user domains
+// List gets list of user domains
 func (d *Domains) List(verbose bool) (*Domains, error) {
 	body, err := request.Get(pdd.DomainsList, request.Options{
 		Headers: map[string]string{

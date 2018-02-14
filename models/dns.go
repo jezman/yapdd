@@ -7,12 +7,14 @@ import (
 	"github.com/jezman/yapdd/pdd"
 )
 
+// DNSRecords structure.
 type DNSRecords struct {
 	Records []*DNSRecord `json:"records"` // dns records
 	Success string       `json:"success"` // request status
 	Error   string       `json:"error"`   // error message
 }
 
+// DNSRecord structure.
 type DNSRecord struct {
 	RecordID  int64  `json:"record_id"`
 	Type      string `json:"type"`
@@ -23,6 +25,7 @@ type DNSRecord struct {
 	Subdomain string `json:"subdomain"`
 }
 
+// DNSRecords gets list of dns records in domain.
 func (d *DNSRecords) DNSRecords(domainName string) (*DNSRecords, error) {
 	body, err := request.Get(pdd.DNSList, request.Options{
 		Headers: map[string]string{
