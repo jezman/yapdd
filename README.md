@@ -26,8 +26,11 @@ Otherwise, please see [Go install](https://golang.org/doc/install).
   * Remove account
   * Get count of unread emails
 
+- DKIM managements
+  * Get informations
+  * Enable/Disable
+
 ## TODO
 - set language for domain
 - domain logo managements
 - update account settings
-- DKIM managements

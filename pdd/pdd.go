@@ -28,4 +28,9 @@ const (
 
 	// dns list
 	DNSList = BaseURL + "/admin/dns/list"
+
+	// DKIM urls
+	DKIMStatus = BaseURL + "/admin/dkim/status"
+	DKIMEnable = BaseURL + "/admin/dkim/enable"
+	DKIMDisable =BaseURL + "/admin/dkim/disable"
 )
