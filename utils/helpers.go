@@ -9,9 +9,11 @@ import (
 	"regexp"
 	"strings"
 	"time"
+
+	"github.com/jezman/request"
 )
 
-var	emailValidateTemplate = regexp.MustCompile("^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$")
+var emailValidateTemplate = regexp.MustCompile("^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$")
 
 // IsAccount check input flag.
 // Return true if flag is account.
@@ -25,7 +27,6 @@ func IsAccount(flag string) bool {
 
 // SplitAccount on login and and domain name.
 func SplitAccount(account string) ([]string, error) {
-
 	account = strings.ToLower(account)
 
 	// check email regexp
@@ -78,4 +79,30 @@ func ReadStdIn(stringToPrint string) string {
 	result := strings.Trim(str, "\n")
 
 	return result
+}
+
+// GetBody helper. 
+// Send request, return response body and error.
+func GetBody(method, url string, headers, params map[string]string) ([]byte, error) {
+	var responseBody []byte
+	var err error
+	switch method {
+	case "GET":
+		responseBody, err = request.Get(url, request.Options{
+			Headers: headers,
+			Body:    params,
+		})
+	case "POST":
+		responseBody, err = request.Post(url, request.Options{
+			Headers: headers,
+			Body:    params,
+		})
+	default:
+		return nil, errors.New("unknown request method")
+
+	}
+	if err != nil {
+		return nil, err
+	}
+	return responseBody, nil
 }
