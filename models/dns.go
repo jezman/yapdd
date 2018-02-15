@@ -16,13 +16,13 @@ type DNSRecords struct {
 
 // DNSRecord structure.
 type DNSRecord struct {
-	RecordID  int64  `json:"record_id"`
-	Type      string `json:"type"`
 	Content   string `json:"content"`
 	Domain    string `json:"domain"`
 	FQDN      string `json:"fqdn"`
-	TTL       int    `json:"ttl"`
+	RecordID  int64  `json:"record_id"`
 	Subdomain string `json:"subdomain"`
+	TTL       int    `json:"ttl"`
+	Type      string `json:"type"`
 }
 
 // DNSRecords gets list of dns records in domain.
