@@ -11,28 +11,29 @@ import (
 
 // Domain struct
 type Domain struct {
-	Domain         string       `json:"domain"`           // domain name
-	Total          int          `json:"total"`            // total counts of user account
-	Accounts       []*Account   `json:"accounts"`         // user account
-	Name           string       `json:"name"`             // domain name
-	Status         string       `json:"status"`           // domain status
-	Delegated      string       `json:"delegated"`        // status of the domain name delegation on the Yandex servers
-	Country        string       `json:"country"`          // interface language for mailboxes by default.
-	PopEnabled     int          `json:"pop_enabled"`      // pop status
-	ImapEnabled    int          `json:"imap_enabled"`     // imap status
-	Aliases        []string     `json:"aliases"`          // list of domain aliases
-	Logo           bool         `json:"logo_enabled"`     // presence logo
-	LogoURL        string       `json:"logo_url"`         // logo URL
-	NSDelegated    bool         `json:"nsdelegated"`      // status of the domain name delegation on the Yandex servers
-	EmailsMaxCount int          `json:"emails-max-count"` // maximum number of mailboxes that can be created for the domain
-	EmailsCount    int          `json:"emails-count"`     // number of available mailboxes
-	NoDKIM         bool         `json:"nodkim"`           // a sign that DKIM is not connected
-	Success        string       `json:"success"`          // request status
-	Secrets        *Secrets     `json:"secrets"`          // Secret data test file (or CNAME records)
-	Error          string       `json:"error"`            // error message
-	CheckResults   string       `json:"check_results"`    // last check result
-	NextCheck      string       `json:"next_check"`       // date and time of next check
-	LastCheck      string       `json:"last_check"`       // date and time of last check
+	Accounts       []*Account `json:"accounts"`      // user account
+	Aliases        []string   `json:"aliases"`       // list of domain aliases
+	CheckResults   string     `json:"check_results"` // last check result
+	Country        string     `json:"country"`       // interface language for mailboxes by default.
+	Delegated      string     `json:"delegated"`     // status of the domain name delegation on the Yandex servers
+	DKIM           DKIM
+	Domain         string   `json:"domain"`           // domain name
+	EmailsCount    int      `json:"emails-count"`     // number of available mailboxes
+	EmailsMaxCount int      `json:"emails-max-count"` // maximum number of mailboxes that can be created for the domain
+	Error          string   `json:"error"`            // error message
+	ImapEnabled    int      `json:"imap_enabled"`     // imap status
+	LastCheck      string   `json:"last_check"`       // date and time of last check
+	Logo           bool     `json:"logo_enabled"`     // presence logo
+	LogoURL        string   `json:"logo_url"`         // logo URL
+	Name           string   `json:"name"`             // domain name
+	NextCheck      string   `json:"next_check"`       // date and time of next check
+	NoDKIM         bool     `json:"nodkim"`           // a sign that DKIM is not connected
+	NSDelegated    bool     `json:"nsdelegated"`      // status of the domain name delegation on the Yandex servers
+	PopEnabled     int      `json:"pop_enabled"`      // pop status
+	Secrets        *Secrets `json:"secrets"`          // Secret data test file (or CNAME records)
+	Status         string   `json:"status"`           // domain status
+	Success        string   `json:"success"`          // request status
+	Total          int      `json:"total"`            // total counts of user account
 }
 
 // Secrets data struct
