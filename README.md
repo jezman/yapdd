@@ -15,6 +15,7 @@ Otherwise, please see [Go install](https://golang.org/doc/install).
 ## Features
 
 - List of user domains.
+- List of accounts in domain.
 - Domains management
   * Add domain
   * Remove domain
