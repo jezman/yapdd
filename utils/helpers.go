@@ -106,3 +106,15 @@ func GetBody(method, url string, headers, params map[string]string) ([]byte, err
 	}
 	return responseBody, nil
 }
+
+// ErrorCheck helper for rendered results.
+// Checks status in response and error.
+func ErrorCheck(status, message string, err error) error {
+	if err != nil {
+		fmt.Println(err)
+		return err
+	} else if status != "ok" {
+		return errors.New(message)
+	}
+	return nil
+}
