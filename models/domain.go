@@ -2,6 +2,7 @@ package models
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/jezman/yapdd/pdd"
 	"github.com/jezman/yapdd/utils"
@@ -123,4 +124,39 @@ func (d *Domain) Remove(domainName string) (*Domain, error) {
 	}
 	// wrong confirmation
 	return nil, errors.New("confirmation error")
+}
+
+// SetCountry for domain.
+func (d *Domain) SetCountry(domainName string) (*Domain, error) {
+	allowedCountries := map[string]string{
+		"ru": "Russian",
+		"en": "English",
+		"ua": "Український",
+		"tr": "Türk",
+		"by": "Беларускі",
+		"az": "Azərbaycan",
+		"ro": "Românesc",
+		"ge": "ქართული",
+		"kz": "Қазақша",
+	}
+
+	fmt.Println("Choose language:")
+	for key, val := range allowedCountries {
+		fmt.Printf("%s - %s\n", key, val)
+	}
+	country := utils.ReadStdIn("choose language: ")
+	if _, ok := allowedCountries[country]; ok {
+		ro.Params["domain"] = domainName
+		ro.Params["country"] = country
+
+		response, err := grequests.Post(pdd.DomainSetCountry, ro)
+		if err != nil {
+			return nil, err
+		}
+		if err := response.JSON(d); err != nil {
+			return nil, err
+		}
+		return d, nil
+	}
+	return nil, errors.New("wrong language")
 }

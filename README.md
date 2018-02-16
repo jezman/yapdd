@@ -30,7 +30,8 @@ Otherwise, please see [Go install](https://golang.org/doc/install).
   * Get informations
   * Enable/Disable
 
+- Set language for domain
+
 ## TODO
-- set language for domain
 - domain logo managements
 - update account settings

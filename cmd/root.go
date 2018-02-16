@@ -12,6 +12,7 @@ import (
 var (
 	dns     bool
 	config  bool
+	country bool
 	status  bool
 	verbose bool
 )
@@ -23,15 +24,18 @@ var rootCmd = &cobra.Command{
 	Long: `YaPDD - Command line application for administration Yandex PDD.
 
 Example:
-  yapdd                     Domains list.
-  yapdd example.com         List of accounts in domain.
-  yapdd example.com -d      Show DNS records.
-  yapdd example.com -s      Domain connection status.
-  yapdd example.com -c      Domain settings.
-  yapdd acc@example.com     Count of unread emails in account.`,
+  yapdd                         Domains list.
+  yapdd example.com             List of accounts in domain.
+  yapdd example.com -d          Show DNS records.
+  yapdd example.com -s          Domain connection status.
+  yapdd example.com -c          Domain settings.
+  yapdd example.com --country   Set Country for domain.
+  yapdd acc@example.com         Count of unread emails in account.`,
 	Args: cobra.RangeArgs(0, 1),
 	Run: func(cmd *cobra.Command, args []string) {
 		switch {
+		case country:
+			render.Country(args[0])
 		case status:
 			render.DomainStatus(args[0])
 		case dns:
@@ -64,4 +68,5 @@ func init() {
 	rootCmd.Flags().BoolVarP(&status, "status", "s", false, "show connection status")
 	rootCmd.Flags().BoolVarP(&config, "config", "c", false, "show config")
 	rootCmd.Flags().BoolVarP(&dns, "dns", "d", false, "show dns")
+	rootCmd.Flags().BoolVarP(&country, "country", "", false, "set country for domain")
 }

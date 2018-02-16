@@ -111,8 +111,8 @@ func CountOfUnreadMail(accountName string) {
 	} else {
 		fmt.Println("Count of unread emails:", account.Counters.New)
 		fmt.Println("Count of letters received since the last mailbox test:",
-			 account.Counters.Unread,
-			)
+			account.Counters.Unread,
+		)
 	}
 }
 
@@ -186,5 +186,16 @@ func DomainDNSRecords(domainName string) {
 			fmt.Println("\t| Subdomain:", d.Subdomain)
 			fmt.Println("\t| Content:", d.Content)
 		}
+	}
+}
+
+// Country print results method SetCountry.
+func Country(domainName string) {
+	domain, err := domain.SetCountry(domainName)
+
+	if err = utils.ErrorCheck(domain.Success, domain.Error, err); err != nil {
+		fmt.Println(err)
+	} else {
+		fmt.Println("The country is successfully installed.")
 	}
 }
