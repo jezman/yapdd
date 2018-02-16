@@ -1,11 +1,12 @@
 package models
 
 import (
-	"encoding/json"
-
-	"github.com/jezman/request"
 	"github.com/jezman/yapdd/pdd"
+	"github.com/jezman/yapdd/utils"
+	"github.com/levigross/grequests"
 )
+
+var ro = utils.RequestOptions
 
 // Domains struct
 type Domains struct {
@@ -15,19 +16,16 @@ type Domains struct {
 	Error   string    `json:"error"`   // error message
 }
 
-// List gets list of user domains
-func (d *Domains) List(verbose bool) (*Domains, error) {
-	body, err := request.Get(pdd.DomainsList, request.Options{
-		Headers: map[string]string{
-			"Content-Type": "application/x-www-form-urlencoded",
-			"PddToken":     pdd.Token,
-		},
-		Body: map[string]string{"on_page": "20"},
-	})
+// List gets list of user domains.
+func (d *Domains) List() (*Domains, error) {
+	ro.Params["on_page"] = "20"
+
+	response, err := grequests.Get(pdd.DomainsList, ro)
 	if err != nil {
 		return nil, err
 	}
-	if err = json.Unmarshal(body, d); err != nil {
+
+	if err := response.JSON(d); err != nil {
 		return nil, err
 	}
 	return d, nil

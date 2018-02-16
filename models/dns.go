@@ -1,10 +1,8 @@
 package models
 
 import (
-	"encoding/json"
-
-	"github.com/jezman/request"
 	"github.com/jezman/yapdd/pdd"
+	"github.com/levigross/grequests"
 )
 
 // DNSRecords structure.
@@ -27,19 +25,13 @@ type DNSRecord struct {
 
 // DNSRecords gets list of dns records in domain.
 func (d *DNSRecords) DNSRecords(domainName string) (*DNSRecords, error) {
-	body, err := request.Get(pdd.DNSList, request.Options{
-		Headers: map[string]string{
-			"Content-Type": "application/x-www-form-urlencoded",
-			"PddToken":     pdd.Token,
-		},
-		Body: map[string]string{
-			"domain": domainName,
-		},
-	})
+	ro.Params["domain"] = domainName
+
+	response, err := grequests.Get(pdd.DNSList, ro)
 	if err != nil {
 		return nil, err
 	}
-	if err = json.Unmarshal(body, d); err != nil {
+	if err := response.JSON(d); err != nil {
 		return nil, err
 	}
 	return d, nil

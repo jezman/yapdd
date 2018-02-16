@@ -1,10 +1,8 @@
 package models
 
 import (
-	"encoding/json"
-
-	"github.com/jezman/request"
 	"github.com/jezman/yapdd/pdd"
+	"github.com/levigross/grequests"
 )
 
 // DKIM structure
@@ -18,58 +16,41 @@ type DKIM struct {
 
 // DKIMStatus gets DKIM informations.
 func (d *Domain) DKIMStatus(domainName string) (*Domain, error) {
-	body, err := request.Get(pdd.DKIMStatus, request.Options{
-		Headers: map[string]string{
-			"Content-Type": "application/x-www-form-urlencoded",
-			"PddToken":     pdd.Token,
-		},
-		Body: map[string]string{
-			"domain": domainName,
-		},
-	})
+	ro.Params["domain"] = domainName
+
+	response, err := grequests.Get(pdd.DKIMStatus, ro)
 	if err != nil {
 		return nil, err
 	}
-	if err = json.Unmarshal(body, d); err != nil {
+	if err := response.JSON(d); err != nil {
 		return nil, err
 	}
 	return d, nil
-
 }
 
+// DKIMEnable for domain.
 func (d *Domain) DKIMEnable(domainName string) (*Domain, error) {
-	body, err := request.Get(pdd.DKIMEnable, request.Options{
-		Headers: map[string]string{
-			"Content-Type": "application/x-www-form-urlencoded",
-			"PddToken":     pdd.Token,
-		},
-		Body: map[string]string{
-			"domain": domainName,
-		},
-	})
+	ro.Params["domain"] = domainName
+
+	response, err := grequests.Post(pdd.DKIMEnable, ro)
 	if err != nil {
 		return nil, err
 	}
-	if err = json.Unmarshal(body, d); err != nil {
+	if err := response.JSON(d); err != nil {
 		return nil, err
 	}
 	return d, nil
 }
 
+// DKIMDisable for domain.
 func (d *Domain) DKIMDisable(domainName string) (*Domain, error) {
-	body, err := request.Get(pdd.DKIMDisable, request.Options{
-		Headers: map[string]string{
-			"Content-Type": "application/x-www-form-urlencoded",
-			"PddToken":     pdd.Token,
-		},
-		Body: map[string]string{
-			"domain": domainName,
-		},
-	})
+	ro.Params["domain"] = domainName
+
+	response, err := grequests.Post(pdd.DKIMDisable, ro)
 	if err != nil {
 		return nil, err
 	}
-	if err = json.Unmarshal(body, d); err != nil {
+	if err := response.JSON(d); err != nil {
 		return nil, err
 	}
 	return d, nil

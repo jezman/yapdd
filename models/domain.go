@@ -1,12 +1,11 @@
 package models
 
 import (
-	"encoding/json"
 	"errors"
 
-	"github.com/jezman/request"
 	"github.com/jezman/yapdd/pdd"
 	"github.com/jezman/yapdd/utils"
+	"github.com/levigross/grequests"
 )
 
 // Domain struct
@@ -43,81 +42,57 @@ type Secrets struct {
 }
 
 // List accounts in domain.
-func (d *Domain) List(domain string, verbose bool) (*Domain, error) {
-	response, err := request.Get(pdd.AccountsList, request.Options{
-		Headers: map[string]string{
-			"Content-Type": "application/x-www-form-urlencoded",
-			"PddToken":     pdd.Token,
-		},
-		Body: map[string]string{
-			"on_page": "500",
-			"domain":  domain,
-		},
-	})
+func (d *Domain) List(domainName string) (*Domain, error) {
+	ro.Params["on_page"] = "1000"
+	ro.Params["domain"] = domainName
+
+	response, err := grequests.Get(pdd.AccountsList, ro)
 	if err != nil {
 		return nil, err
 	}
-	if err = json.Unmarshal(response, d); err != nil {
+	if err := response.JSON(d); err != nil {
 		return nil, err
 	}
 	return d, nil
 }
 
 // Add domain into Yandex PDD.
-func (d *Domain) Add(domain string) (*Domain, error) {
-	body, err := request.Post(pdd.DomainAdd, request.Options{
-		Headers: map[string]string{
-			"Content-Type": "application/x-www-form-urlencoded",
-			"PddToken":     pdd.Token,
-		},
-		Body: map[string]string{
-			"domain": domain,
-		},
-	})
+func (d *Domain) Add(domainName string) (*Domain, error) {
+	ro.Params["domain"] = domainName
+
+	response, err := grequests.Post(pdd.DomainAdd, ro)
 	if err != nil {
 		return nil, err
 	}
-	if err = json.Unmarshal(body, d); err != nil {
+	if err := response.JSON(d); err != nil {
 		return nil, err
 	}
 	return d, nil
 }
 
 // ConnectionStatus gets domain connetion status.
-func (d *Domain) ConnectionStatus(domain string) (*Domain, error) {
-	body, err := request.Get(pdd.DomainStatus, request.Options{
-		Headers: map[string]string{
-			"Content-Type": "application/x-www-form-urlencoded",
-			"PddToken":     pdd.Token,
-		},
-		Body: map[string]string{
-			"domain": domain,
-		},
-	})
+func (d *Domain) ConnectionStatus(domainName string) (*Domain, error) {
+	ro.Params["domain"] = domainName
+
+	response, err := grequests.Get(pdd.DomainStatus, ro)
 	if err != nil {
 		return nil, err
 	}
-	if err = json.Unmarshal(body, d); err != nil {
+	if err := response.JSON(d); err != nil {
 		return nil, err
 	}
 	return d, nil
 }
 
 // Config gets domain settings.
-func (d *Domain) Config(domain string) (*Domain, error) {
-	body, err := request.Get(pdd.DomainConfig, request.Options{
-		Headers: map[string]string{
-			"Content-Type": "application/x-www-form-urlencoded",
-			"PddToken":     pdd.Token,
-		},
-		Body: map[string]string{
-			"domain": domain,
-		},
-	})
+func (d *Domain) Config(domainName string) (*Domain, error) {
+	ro.Params["domain"] = domainName
+
+	response, err := grequests.Get(pdd.DomainConfig, ro)
 	if err != nil {
 		return nil, err
 	}
-	if err = json.Unmarshal(body, d); err != nil {
+	if err := response.JSON(d); err != nil {
 		return nil, err
 	}
 	return d, nil
@@ -134,25 +109,18 @@ func (d *Domain) Remove(domainName string) (*Domain, error) {
 
 	// check confirmation
 	if confirmation == capcha {
+		ro.Params["domain"] = domainName
+
 		// sends remove request
-		body, err := request.Post(pdd.DomainDelete, request.Options{
-			Headers: map[string]string{
-				"Content-Type": "application/x-www-form-urlencoded",
-				"PddToken":     pdd.Token,
-			},
-			Body: map[string]string{
-				"domain": domainName,
-			},
-		})
+		response, err := grequests.Get(pdd.DomainDelete, ro)
 		if err != nil {
 			return nil, err
 		}
-		if err = json.Unmarshal(body, d); err != nil {
+		if err := response.JSON(d); err != nil {
 			return nil, err
 		}
 		return d, nil
 	}
-
 	// wrong confirmation
 	return nil, errors.New("confirmation error")
 }

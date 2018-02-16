@@ -1,6 +1,8 @@
 package pdd
 
-import "os"
+import (
+	"os"
+)
 
 var (
 	// Token API. Get from os envinronment
@@ -30,7 +32,7 @@ const (
 	DNSList = BaseURL + "/admin/dns/list"
 
 	// DKIM urls
-	DKIMStatus = BaseURL + "/admin/dkim/status"
-	DKIMEnable = BaseURL + "/admin/dkim/enable"
-	DKIMDisable =BaseURL + "/admin/dkim/disable"
+	DKIMStatus  = BaseURL + "/admin/dkim/status"
+	DKIMEnable  = BaseURL + "/admin/dkim/enable"
+	DKIMDisable = BaseURL + "/admin/dkim/disable"
 )

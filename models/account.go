@@ -1,13 +1,12 @@
 package models
 
 import (
-	"encoding/json"
 	"errors"
 	"strings"
 
-	"github.com/jezman/request"
 	"github.com/jezman/yapdd/pdd"
 	"github.com/jezman/yapdd/utils"
+	"github.com/levigross/grequests"
 )
 
 // Account struct
@@ -15,19 +14,19 @@ type Account struct {
 	Aliases  []string  `json:"aliases"`    // email aliases
 	Birthday string    `json:"birth_date"` // birthday YYYY-MM-DD
 	Counters *Counters `json:"counters"`
-	Domain   string    `json:"domain"`     // domain name
-	Enabled  string    `json:"enabled"`    // email account status
-	Error    string    `json:"error"`      // error code
-	FName    string    `json:"fname"`      // last name
-	IName    string    `json:"iname"`      // first name
-	Login    string    `json:"login"`      // email address
-	MailList string    `json:"maillist"`   // email for newsletter
-	Question string    `json:"hintq"`      // secret question
-	Ready    string    `json:"ready"`      // ready to work
-	Sex      int       `json:"sex"`        // 0 - not set; 1 - male; 2 - female
-	Success  string    `json:"success"`    // request status
-	UID      int       `json:"uid"`        // email id
-	User     string    `json:"fio"`        // full name
+	Domain   string    `json:"domain"`   // domain name
+	Enabled  string    `json:"enabled"`  // email account status
+	Error    string    `json:"error"`    // error code
+	FName    string    `json:"fname"`    // last name
+	IName    string    `json:"iname"`    // first name
+	Login    string    `json:"login"`    // email address
+	MailList string    `json:"maillist"` // email for newsletter
+	Question string    `json:"hintq"`    // secret question
+	Ready    string    `json:"ready"`    // ready to work
+	Sex      int       `json:"sex"`      // 0 - not set; 1 - male; 2 - female
+	Success  string    `json:"success"`  // request status
+	UID      int       `json:"uid"`      // email id
+	User     string    `json:"fio"`      // full name
 }
 
 // Counters of unread mails struct
@@ -43,23 +42,14 @@ func (a *Account) UnreadMail(account string) (*Account, error) {
 		return nil, err
 	}
 
-	accountName := tmp[0]
-	domainName := tmp[1]
+	ro.Params["login"] = tmp[0]
+	ro.Params["domain"] = tmp[1]
 
-	response, err := request.Get(pdd.AccountUnreadEmails, request.Options{
-		Headers: map[string]string{
-			"Content-Type": "application/x-www-form-urlencoded",
-			"PddToken":     pdd.Token,
-		},
-		Body: map[string]string{
-			"domain": domainName,
-			"login":  accountName,
-		},
-	})
+	response, err := grequests.Get(pdd.AccountUnreadEmails, ro)
 	if err != nil {
 		return nil, err
 	}
-	if err = json.Unmarshal(response, a); err != nil {
+	if err := response.JSON(a); err != nil {
 		return nil, err
 	}
 	return a, nil
@@ -74,7 +64,7 @@ func (a *Account) Add(account string) (*Account, error) {
 	if strings.ToLower(ask) == "yes" || strings.ToLower(ask) == "" {
 		password[0] = utils.GeneratePassword(11)
 		password[1] = password[0]
-	// hand password input
+		// hand password input
 	} else {
 		// first password input
 		password[0] = utils.ReadStdIn("Password: ")
@@ -89,30 +79,21 @@ func (a *Account) Add(account string) (*Account, error) {
 			return nil, errors.New("invalid email format")
 		}
 
-		accountName := tmp[0]
-		domainName := tmp[1]
+		ro.Params["login"] = tmp[0]
+		ro.Params["domain"] = tmp[1]
+		ro.Params["password"] = password[1]
 
 		// send request
-		response, err := request.Post(pdd.AccountAdd, request.Options{
-			Headers: map[string]string{
-				"Content-Type": "application/x-www-form-urlencoded",
-				"PddToken":     pdd.Token,
-			},
-			Body: map[string]string{
-				"domain":   domainName,
-				"login":    accountName,
-				"password": password[1],
-			},
-		})
+		response, err := grequests.Post(pdd.AccountAdd, ro)
 		if err != nil {
 			return nil, err
 		}
-		if err = json.Unmarshal(response, a); err != nil {
+		if err := response.JSON(a); err != nil {
 			return nil, err
 		}
 		return a, nil
 	}
-	
+
 	return nil, errors.New("passwords don't match")
 }
 
@@ -132,28 +113,19 @@ func (a *Account) Remove(accountName string) (*Account, error) {
 			return nil, errors.New("invalid email format")
 		}
 
-		accountName := tmp[0]
-		domainName := tmp[1]
+		ro.Params["login"] = tmp[0]
+		ro.Params["domain"] = tmp[1]
 		// sends remove request
-		body, err := request.Post(pdd.AccountDelete, request.Options{
-			Headers: map[string]string{
-				"Content-Type": "application/x-www-form-urlencoded",
-				"PddToken":     pdd.Token,
-			},
-			Body: map[string]string{
-				"login":  accountName,
-				"domain": domainName,
-			},
-		})
+
+		response, err := grequests.Post(pdd.AccountAdd, ro)
 		if err != nil {
 			return nil, err
 		}
-		if err = json.Unmarshal(body, a); err != nil {
+		if err := response.JSON(a); err != nil {
 			return nil, err
 		}
 		return a, nil
 	}
-
 	// wrong confirmation
 	return nil, errors.New("confirmation error")
 }
