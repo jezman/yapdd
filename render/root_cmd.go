@@ -6,17 +6,22 @@ import (
 
 	"github.com/apcera/termtables"
 	"github.com/jezman/yapdd/models"
+	"github.com/jezman/yapdd/utils"
+)
+
+var (
+	account = &models.Account{}
+	dns     = &models.DNSRecords{}
+	domain  = &models.Domain{}
+	domains = &models.Domains{}
 )
 
 // Domains render domains list table.
 func Domains(verbose bool) {
-	domains := &models.Domains{}
-	json, err := domains.List(verbose)
+	domains, err := domains.List()
 
-	if err != nil {
+	if err = utils.ErrorCheck(domains.Success, domains.Error, err); err != nil {
 		fmt.Println(err)
-	} else if json.Success != "ok" {
-		fmt.Println("Error:", json.Error)
 	} else {
 		table := termtables.CreateTable()
 		table.AddTitle("List of user domains.")
@@ -34,7 +39,7 @@ func Domains(verbose bool) {
 				"Max accounts",
 			)
 
-			for i, d := range json.Domains {
+			for i, d := range domains.Domains {
 				table.AddRow(
 					i+1,
 					d.Name,
@@ -51,7 +56,7 @@ func Domains(verbose bool) {
 		} else {
 			table.AddHeaders("#", "Domains", "Accounts")
 
-			for i, d := range json.Domains {
+			for i, d := range domains.Domains {
 				table.AddRow(i+1, d.Name, d.EmailsCount)
 			}
 		}
@@ -61,13 +66,10 @@ func Domains(verbose bool) {
 
 // Accounts render accounts list in domain.
 func Accounts(domainName string, verbose bool) {
-	domain := &models.Domain{}
-	json, err := domain.List(domainName, verbose)
+	domain, err := domain.List(domainName)
 
-	if err != nil {
+	if err = utils.ErrorCheck(domain.Success, domain.Error, err); err != nil {
 		fmt.Println(err)
-	} else if json.Success != "ok" {
-		fmt.Println("Error:", json.Error)
 	} else {
 		table := termtables.CreateTable()
 		table.AddTitle("A list of accounts in the domain.")
@@ -76,7 +78,7 @@ func Accounts(domainName string, verbose bool) {
 		if verbose {
 			table.AddHeaders("#", "Account", "Active/Ready", "Username/Birthday", "Question hint")
 
-			for i, a := range json.Accounts {
+			for i, a := range domain.Accounts {
 				table.AddRow(
 					i+1,
 					a.Login,
@@ -89,7 +91,7 @@ func Accounts(domainName string, verbose bool) {
 		} else {
 			table.AddHeaders("#", "Account")
 
-			for i, a := range json.Accounts {
+			for i, a := range domain.Accounts {
 				table.AddRow(
 					i+1,
 					a.Login,
@@ -102,28 +104,24 @@ func Accounts(domainName string, verbose bool) {
 
 // CountOfUnreadMail in account.
 func CountOfUnreadMail(accountName string) {
-	account := &models.Account{}
-	json, err := account.UnreadMail(accountName)
+	account, err := account.UnreadMail(accountName)
 
-	if err != nil {
+	if err = utils.ErrorCheck(account.Success, account.Error, err); err != nil {
 		fmt.Println(err)
-	} else if json.Success != "ok" {
-		fmt.Println("Error:", json.Error)
 	} else {
-		fmt.Println("Count of unread emails:", json.Counters.New)
-		fmt.Println("Count of letters received since the last mailbox test:", json.Counters.Unread)
+		fmt.Println("Count of unread emails:", account.Counters.New)
+		fmt.Println("Count of letters received since the last mailbox test:",
+			 account.Counters.Unread,
+			)
 	}
 }
 
 // DomainStatus render connection status.
 func DomainStatus(domainName string) {
-	domain := &models.Domain{}
-	json, err := domain.ConnectionStatus(domainName)
+	domain, err := domain.ConnectionStatus(domainName)
 
-	if err != nil {
+	if err = utils.ErrorCheck(domain.Success, domain.Error, err); err != nil {
 		fmt.Println(err)
-	} else if json.Success != "ok" {
-		fmt.Println("Error:", json.Error)
 	} else {
 		table := termtables.CreateTable()
 		table.AddTitle("Domain connection status.")
@@ -131,11 +129,11 @@ func DomainStatus(domainName string) {
 		table.AddHeaders("Domain", "Status", "Check results", "Last check", "Next check")
 
 		table.AddRow(
-			json.Domain,
-			json.Status,
-			json.CheckResults,
-			json.LastCheck,
-			json.NextCheck,
+			domain.Domain,
+			domain.Status,
+			domain.CheckResults,
+			domain.LastCheck,
+			domain.NextCheck,
 		)
 		fmt.Println(table.Render())
 	}
@@ -143,13 +141,10 @@ func DomainStatus(domainName string) {
 
 // DomainConfig render domain settings.
 func DomainConfig(domainName string) {
-	domain := &models.Domain{}
-	json, err := domain.Config(domainName)
+	domain, err := domain.Config(domainName)
 
-	if err != nil {
+	if err = utils.ErrorCheck(domain.Success, domain.Error, err); err != nil {
 		fmt.Println(err)
-	} else if json.Success != "ok" {
-		fmt.Println("Error:", json.Error)
 	} else {
 		table := termtables.CreateTable()
 		table.AddTitle("Domain settings.")
@@ -164,12 +159,12 @@ func DomainConfig(domainName string) {
 		)
 
 		table.AddRow(
-			json.Domain,
-			json.Status,
-			json.Delegated,
-			json.Country,
-			json.ImapEnabled,
-			json.PopEnabled,
+			domain.Domain,
+			domain.Status,
+			domain.Delegated,
+			domain.Country,
+			domain.ImapEnabled,
+			domain.PopEnabled,
 		)
 		fmt.Println(table.Render())
 	}
@@ -177,15 +172,12 @@ func DomainConfig(domainName string) {
 
 // DomainDNSRecords print DNS records in domain.
 func DomainDNSRecords(domainName string) {
-	domain := &models.DNSRecords{}
-	json, err := domain.DNSRecords(domainName)
+	dns, err := dns.DNSRecords(domainName)
 
-	if err != nil {
+	if err = utils.ErrorCheck(dns.Success, dns.Error, err); err != nil {
 		fmt.Println(err)
-	} else if json.Success != "ok" {
-		fmt.Println("Error:", json.Error)
 	} else {
-		for _, d := range json.Records {
+		for _, d := range dns.Records {
 			fmt.Printf("%s\n", strings.Repeat("-", 50))
 			fmt.Printf("%s\t| ", d.Type)
 			fmt.Println("Record ID:", d.RecordID)
