@@ -3,54 +3,45 @@ package render
 import (
 	"fmt"
 
-	"github.com/jezman/yapdd/models"
+	"github.com/jezman/yapdd/utils"
 )
 
 // DKIMStatus render DKIM informations.
 func DKIMStatus(domainName string) {
-	d := &models.Domain{}
-	json, err := d.DKIMStatus(domainName)
+	domain, err := domain.DKIMStatus(domainName)
 
-	if err != nil {
+	if err = utils.ErrorCheck(domain.Success, domain.Error, err); err != nil {
 		fmt.Println(err)
-	} else if json.Success != "ok" {
-		fmt.Printf("Error: %s\n", json.Error)
 	} else {
-		fmt.Println("Domain:", json.Domain)
-		fmt.Println("Status:", json.DKIM.Status)
-		fmt.Println("TXT record:", json.DKIM.TxtRecord)
-		fmt.Println("Mail ready:", json.DKIM.MailReady)
-		fmt.Println("Secret key:", json.DKIM.SecretKey)
+		fmt.Println("Domain:", domain.Domain)
+		fmt.Println("Status:", domain.DKIM.Status)
+		fmt.Println("TXT record:", domain.DKIM.TxtRecord)
+		fmt.Println("Mail ready:", domain.DKIM.MailReady)
+		fmt.Println("Secret key:", domain.DKIM.SecretKey)
 	}
 }
 
 // DKIMEnable print result.
 func DKIMEnable(domainName string) {
-	d := &models.Domain{}
-	json, err := d.DKIMEnable(domainName)
+	domain, err := domain.DKIMEnable(domainName)
 
-	if err != nil {
+	if err = utils.ErrorCheck(domain.Success, domain.Error, err); err != nil {
 		fmt.Println(err)
-	} else if json.Success != "ok" {
-		fmt.Printf("Error: %s\n", json.Error)
 	} else {
-		fmt.Println("Domain:", json.Domain)
-		fmt.Println("Status:", json.DKIM.Status)
-		fmt.Println("TXT record:", json.DKIM.TxtRecord)
+		fmt.Println("Domain:", domain.Domain)
+		fmt.Println("Status:", domain.DKIM.Status)
+		fmt.Println("TXT record:", domain.DKIM.TxtRecord)
 	}
 }
 
 // DKIMDisable print result.
 func DKIMDisable(domainName string) {
-	d := &models.Domain{}
-	json, err := d.DKIMDisable(domainName)
+	domain, err := domain.DKIMDisable(domainName)
 
-	if err != nil {
+	if err = utils.ErrorCheck(domain.Success, domain.Error, err); err != nil {
 		fmt.Println(err)
-	} else if json.Success != "ok" {
-		fmt.Printf("Error: %s\n", json.Error)
 	} else {
-		fmt.Println("Domain:", json.Domain)
-		fmt.Println("Status:", json.Success)
+		fmt.Println("Domain:", domain.Domain)
+		fmt.Println("Status:", domain.Success)
 	}
 }
