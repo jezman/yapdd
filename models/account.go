@@ -2,6 +2,7 @@ package models
 
 import (
 	"errors"
+	"fmt"
 	"strings"
 
 	"github.com/jezman/yapdd/pdd"
@@ -91,6 +92,8 @@ func (a *Account) Add(account string) (*Account, error) {
 		if err := response.JSON(a); err != nil {
 			return nil, err
 		}
+
+		fmt.Printf("password: %s", ro.Params["password"])
 		return a, nil
 	}
 

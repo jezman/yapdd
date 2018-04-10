@@ -23,6 +23,7 @@ func AddAccount(accountName string) {
 
 	if err = utils.ErrorCheck(account.Success, account.Error, err); err != nil {
 		fmt.Println(err)
+	} else {
 		fmt.Printf("Account '%s' was successfully added.\n", account.Login)
 	}
 }
