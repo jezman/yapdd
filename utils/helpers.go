@@ -24,14 +24,17 @@ func IsAccount(flag string) bool {
 }
 
 // SplitAccount on login and and domain name.
-func SplitAccount(account string) ([]string, error) {
+func SplitAccount(account string) error {
 	account = strings.ToLower(account)
 
 	// check email regexp
 	if emailValidateTemplate.MatchString(account) {
-		return strings.Split(account, "@"), nil
+		params := strings.Split(account, "@")
+		RequestOptions.Params["login"] = params[0]
+		RequestOptions.Params["domain"] = params[1]
+		return nil
 	}
-	return nil, errors.New("error: invalid email")
+	return errors.New("error: invalid email")
 }
 
 // GeneratePassword for email account.
