@@ -33,6 +33,7 @@ Otherwise, please see [Go install](https://golang.org/doc/install).
 
 - Set language for domain
 
+- Update account settings
+
 ## TODO
 - domain logo managements
-- update account settings
