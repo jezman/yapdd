@@ -36,15 +36,13 @@ type Counters struct {
 	New    int `json:"new"`
 }
 
+var err error
+
 // UnreadMail gets count of unread emails in account.
 func (a *Account) UnreadMail(account string) (*Account, error) {
-	tmp, err := utils.SplitAccount(account)
-	if err != nil {
+	if err = utils.SplitAccount(account); err != nil {
 		return nil, err
 	}
-
-	ro.Params["login"] = tmp[0]
-	ro.Params["domain"] = tmp[1]
 
 	response, err := grequests.Get(pdd.AccountUnreadEmails, ro)
 	if err != nil {
@@ -75,13 +73,10 @@ func (a *Account) Add(account string) (*Account, error) {
 
 	// check passwords match
 	if password[0] == password[1] {
-		tmp, err := utils.SplitAccount(account)
-		if err != nil {
+		if err = utils.SplitAccount(account); err != nil {
 			return nil, errors.New("invalid email format")
 		}
 
-		ro.Params["login"] = tmp[0]
-		ro.Params["domain"] = tmp[1]
 		ro.Params["password"] = password[1]
 
 		// send request
@@ -93,7 +88,6 @@ func (a *Account) Add(account string) (*Account, error) {
 			return nil, err
 		}
 
-		fmt.Printf("password: %s", ro.Params["password"])
 		return a, nil
 	}
 
@@ -105,22 +99,18 @@ func (a *Account) Remove(accountName string) (*Account, error) {
 	// generates capcha for confirm remove
 	capcha := utils.RandomInt(8)
 
-	warning := "please confirm account removed. input: " + capcha + "\n"
+	warning := "please confirm account removed. input: " + capcha + " - "
 	// read user confirmation
 	confirmation := utils.ReadStdIn(warning)
 
 	// check confirmation
 	if confirmation == capcha {
-		tmp, err := utils.SplitAccount(accountName)
-		if err != nil {
+		if err = utils.SplitAccount(accountName); err != nil {
 			return nil, errors.New("invalid email format")
 		}
 
-		ro.Params["login"] = tmp[0]
-		ro.Params["domain"] = tmp[1]
 		// sends remove request
-
-		response, err := grequests.Post(pdd.AccountAdd, ro)
+		response, err := grequests.Post(pdd.AccountDelete, ro)
 		if err != nil {
 			return nil, err
 		}
@@ -131,4 +121,28 @@ func (a *Account) Remove(accountName string) (*Account, error) {
 	}
 	// wrong confirmation
 	return nil, errors.New("confirmation error")
+}
+
+// Update account informations
+func (a *Account) Update(accountName string, params map[string]string) (*Account, error) { // (*Account, error) {
+	if err = utils.SplitAccount(accountName); err != nil {
+		return nil, errors.New("invalid email format")
+	}
+
+	// set params for request
+	for k, v := range params {
+		ro.Params[k] = v
+		fmt.Println(ro.Params[k])
+	}
+
+	response, err := grequests.Post(pdd.AccountUpdate, ro)
+	if err != nil {
+		return nil, err
+	}
+
+	if err := response.JSON(a); err != nil {
+		return nil, err
+	}
+
+	return a, nil
 }
