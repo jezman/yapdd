@@ -87,7 +87,8 @@ func (a *Account) Add(account string) (*Account, error) {
 		if err := response.JSON(a); err != nil {
 			return nil, err
 		}
-
+		
+		fmt.Println("Password:", password[1])
 		return a, nil
 	}
 
@@ -124,7 +125,7 @@ func (a *Account) Remove(accountName string) (*Account, error) {
 }
 
 // Update account informations
-func (a *Account) Update(accountName string, params map[string]string) (*Account, error) { // (*Account, error) {
+func (a *Account) Update(accountName string, params map[string]string) (*Account, error) {
 	if err = utils.SplitAccount(accountName); err != nil {
 		return nil, errors.New("invalid email format")
 	}
@@ -134,6 +135,49 @@ func (a *Account) Update(accountName string, params map[string]string) (*Account
 		ro.Params[k] = v
 		fmt.Println(ro.Params[k])
 	}
+
+	response, err := grequests.Post(pdd.AccountUpdate, ro)
+	if err != nil {
+		return nil, err
+	}
+
+	if err := response.JSON(a); err != nil {
+		return nil, err
+	}
+
+	return a, nil
+}
+
+
+// Enable diactivated account
+func (a *Account) Enable(accountName string) (*Account, error) {
+	if err = utils.SplitAccount(accountName); err != nil {
+		return nil, errors.New("invalid email format")
+	}
+
+	// set params for request
+	ro.Params["enabled"] = "yes"
+
+	response, err := grequests.Post(pdd.AccountUpdate, ro)
+	if err != nil {
+		return nil, err
+	}
+
+	if err := response.JSON(a); err != nil {
+		return nil, err
+	}
+
+	return a, nil
+}
+
+// Disable account
+func (a *Account) Disable(accountName string) (*Account, error) {
+	if err = utils.SplitAccount(accountName); err != nil {
+		return nil, errors.New("invalid email format")
+	}
+
+	// set params for request
+	ro.Params["enabled"] = "no"
 
 	response, err := grequests.Post(pdd.AccountUpdate, ro)
 	if err != nil {
