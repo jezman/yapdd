@@ -17,10 +17,7 @@ var emailValidateTemplate = regexp.MustCompile("^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]
 // Return true if flag is account.
 // Return false if flag is a domain name.
 func IsAccount(flag string) bool {
-	if emailValidateTemplate.MatchString(flag) {
-		return true
-	}
-	return false
+	return emailValidateTemplate.MatchString(flag)
 }
 
 // SplitAccount on login and and domain name.
@@ -64,7 +61,7 @@ func RandomInt(n int) string {
 	}
 
 	s := strings.Trim(strings.Replace(fmt.Sprint(intArray), " ", "", -1), "[]")
-	return string(s)
+	return s
 }
 
 // ReadStdIn helper for read string.
