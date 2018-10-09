@@ -44,3 +44,6 @@ go get github.com/jezman/yapdd && go install github.com/jezman/yapdd
   * Enable/Disable
 
 - Set language for domain
+
+## License
+MIT © 2017 jezman
