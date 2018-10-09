@@ -2,16 +2,18 @@
 Command line application for administration Yandex PDD.
 ## Installing
 
-Set environment variable **PDD_TOKEN**:
+- get [PDD-token](https://pddimp.yandex.ru/api2/admin/get_token)
+
+- set environment variable **PDD_TOKEN**:
 ```bash
 export PDD_TOKEN="yandex_pdd_api_token"
 ```
-Install Gorion
+- install Gorion
 If you have [Go](https://golang.org/) installed: 
 ```bash
 go get github.com/jezman/yapdd && go install github.com/jezman/yapdd
 ```
-Otherwise, please see [Go install](https://golang.org/doc/install).
+- otherwise, please see [Go install](https://golang.org/doc/install).
 ## Features
 
 - List of user domains.
@@ -27,13 +29,18 @@ Otherwise, please see [Go install](https://golang.org/doc/install).
   * Remove account
   * Get count of unread emails
 
+- Update account settings
+  * password
+  * first name
+  * last name
+  * lock/unlock
+  * birthday
+  * sex
+  * secret question
+  * secret answer
+
 - DKIM managements
   * Get informations
   * Enable/Disable
 
 - Set language for domain
-
-- Update account settings
-
-## TODO
-- domain logo managements
