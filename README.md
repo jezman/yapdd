@@ -46,4 +46,4 @@ go get github.com/jezman/yapdd && go install github.com/jezman/yapdd
 - Set language for domain
 
 ## License
-MIT @ jezman
+MIT © 2017 jezman
